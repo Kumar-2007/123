@@ -1,0 +1,97 @@
+import 'package:flutter/material.dart';
+
+class NoticeScreen extends StatefulWidget {
+  const NoticeScreen({super.key});
+
+  @override
+  State<NoticeScreen> createState() => _NoticeScreenState();
+}
+
+class _NoticeScreenState extends State<NoticeScreen> {
+  final List<String> _notices = [
+    "Welcome to the Notice Board App!",
+    "Mid-term exams scheduled for next month.",
+    "Project submission deadline updated to Friday."
+  ];
+
+  final TextEditingController _controller = TextEditingController();
+
+  void _addNotice() {
+    if (_controller.text.trim().isNotEmpty) {
+      setState(() {
+        _notices.add(_controller.text.trim());
+      });
+      _controller.clear();
+      Navigator.pop(context);
+    }
+  }
+
+  void _showAddDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add New Notice'),
+        content: TextField(
+          controller: _controller,
+          decoration: const InputDecoration(
+            hintText: 'Enter notice details',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: _addNotice,
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Notice Board'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: _notices.isEmpty
+          ? const Center(
+              child: Text(
+                'No notices found. Add one!',
+                style: TextStyle(fontSize: 16),
+              ),
+            )
+          : ListView.builder(
+              itemCount: _notices.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: ListTile(
+                    leading: const Icon(Icons.notifications, color: Colors.blue),
+                    title: Text(_notices[index]),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          _notices.removeAt(index);
+                        });
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddDialog,
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+}
